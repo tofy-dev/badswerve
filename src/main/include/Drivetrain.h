@@ -30,10 +30,10 @@ class Drivetrain {
  private:
   const k_internal::swerve_wrapper fl = k::data::fl, fr = k::data::fr, bl = k::data::bl, br = k::data::br;
 
-  SwerveModule m_frontLeft{fl.driveId, fl.steeringId, fl.absoluteId, fl.offset};
-  SwerveModule m_frontRight{fr.driveId, fr.steeringId, fr.absoluteId, fr.offset};
-  SwerveModule m_backLeft{bl.driveId, bl.steeringId, bl.absoluteId, bl.offset};
-  SwerveModule m_backRight{br.driveId, br.steeringId, br.absoluteId, br.offset};
+  SwerveModule m_frontLeft{fl.driveId, fl.steeringId, fl.absoluteId, fl.offset, fl.driveReversed, fl.steeringReversed, fl.absoluteReversed};
+  SwerveModule m_frontRight{fr.driveId, fr.steeringId, fr.absoluteId, fr.offset, fr.driveReversed, fr.steeringReversed, fr.absoluteReversed};
+  SwerveModule m_backLeft{bl.driveId, bl.steeringId, bl.absoluteId, bl.offset, bl.driveReversed, bl.steeringReversed, bl.absoluteReversed};
+  SwerveModule m_backRight{br.driveId, br.steeringId, br.absoluteId, br.offset, br.driveReversed, br.steeringReversed, br.absoluteReversed};
 
   AHRS m_gyro{frc::SPI::Port::kMXP};
 

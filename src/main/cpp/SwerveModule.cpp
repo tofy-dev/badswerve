@@ -12,27 +12,29 @@
 
 
 SwerveModule::SwerveModule(int driveMotorId, int turningMotorId,
-                           int absoluteEncoderId, units::radian_t absoluteOffset)
+                           int absoluteEncoderId, units::radian_t absoluteOffset,
+                           bool driveReversed, bool steerReversed, bool absoluteReversed)
     : m_driveMotor(driveMotorId, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
       m_turningMotor(turningMotorId, rev::CANSparkMaxLowLevel::MotorType::kBrushless),
       m_driveEncoder(m_driveMotor.GetEncoder()),
       m_turningEncoder(m_turningMotor.GetEncoder()),
       m_absoluteEncoder(absoluteEncoderId),
-      m_absoluteOffset(absoluteOffset) {
+      m_absoluteOffset(absoluteOffset),
+      m_absoluteReversed(absoluteReversed) {
 
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
   // resolution.
   m_driveEncoder.SetPositionConversionFactor(2 * std::numbers::pi * k::data::wheelRadius /
                                      k::data::encoderResolution);
-  // +++++++ set inverted if necessary
+  m_driveEncoder.SetInverted(driveReversed);
 
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * std::numbers::pi)
   // divided by the encoder resolution.
   m_turningEncoder.SetPositionConversionFactor(2 * std::numbers::pi /
                                        k::data::encoderResolution);
-  // +++++++ set inverted if necessary
+  m_turningEncoder.SetInverted(steerReversed);
 
   // Limit the PID Controller's input range between -pi and pi and set the input
   // to be continuous.
@@ -78,8 +80,7 @@ units::radian_t SwerveModule::GetAbsoluteEncoderRad() {
     units::radian_t angle = units::radian_t{m_absoluteEncoder.GetVoltage() / frc::RobotController::GetVoltage5V()};
     angle *= 2 * M_PI;
     angle -= m_absoluteOffset;
-    return angle;
-    // return angle * (absoluteEncoderReversed ? -1.0 : 1.0);
+    return angle * (m_absoluteReversed ? -1.0 : 1.0);
 }
 
 void SwerveModule::ResetEncoders() {
